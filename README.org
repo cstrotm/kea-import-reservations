@@ -6,7 +6,7 @@ Example:
 #+begin_example
 # python3 import-reservation.py reservations.json http://192.0.2.4:9099 --ignore_duplicate
 Importing JSON reservations from reservations.json
-Sending to API endpoint http://191.0.1.4:9099
+Sending to API endpoint http://192.0.1.4:9099
 Finished importing reservations
 Reservations processed: 64
 Successfully imported : 12
