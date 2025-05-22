@@ -1,0 +1,58 @@
+* kea-import-reservations
+
+Script to import DHCP reservations from a JSON file into a Kea DHCP server (https://kea.isc.org)
+
+Example:
+#+begin_example
+# python3 import-reservation.py reservations.json http://172.22.1.4:9099 --ignore_duplicate
+Importing JSON reservations from reservations.json
+Sending to API endpoint http://172.22.1.4:9099
+Finished importing reservations
+Reservations processed: 64
+Successfully imported : 12
+Import failed         : 3
+Duplicates ignored    : 49
+#+end_example
+
+Example JSON file (can be generated from ISC-DHCP configuration with =keama= https://dhcp.isc.org/)
+
+#+begin_example
+{
+  "reservations": [
+    {
+      "hostname": "host03",
+      "hw-address": "00:17:42:ef:ee:16"
+    },
+    {
+      "hostname": "host04",
+      "hw-address": "00:1d:e0:ee:de:eb",
+      "ip-address": "192.0.2.10",
+      "option-data": [
+        {
+          "space": "dhcp4",
+          "name": "host-name",
+          "code": 12,
+          "data": "host04.sub.example.com"
+        }
+      ]
+    },
+    {
+      "hostname": "host05",
+      "hw-address": "00:17:42:8e:7e:28"
+      "ip-address": "192.0.2.12",
+      "option-data": [
+        {
+          "space": "dhcp4",
+          "name": "host-name",
+          "code": 12,
+          "data": "host05.sub.example.com"
+        }
+      ]
+    }
+  ]
+}
+#+end_example
+* TODO:
+
+Fix the ugly workaround to find the =subnet-id= value, see
+https://gitlab.isc.org/isc-projects/kea/-/issues/3899
