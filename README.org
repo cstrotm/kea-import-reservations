@@ -4,14 +4,15 @@ Script to import DHCP reservations from a JSON file into a Kea DHCP server (http
 
 Example:
 #+begin_example
-# python3 import-reservation.py reservations.json http://192.0.2.4:9099 --ignore_duplicate
+# python3 import-reservation.py reservations.json http://192.0.2.4:9099 --replace
 Importing JSON reservations from reservations.json
-Sending to API endpoint http://192.0.1.4:9099
+Sending to API endpoint http://192.0.2.4:9099
 Finished importing reservations
 Reservations processed: 64
 Successfully imported : 12
+Successfully replaced : 49
 Import failed         : 3
-Duplicates ignored    : 49
+Duplicates ignored    : 0
 #+end_example
 
 Example JSON file (can be generated from ISC-DHCP configuration with =keama= https://dhcp.isc.org/)

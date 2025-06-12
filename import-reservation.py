@@ -8,11 +8,13 @@ parser = argparse.ArgumentParser(description = msg)
 parser.add_argument("file", help="Path or filename to JSON file to import")
 parser.add_argument("URL", help="URL of Kea DHCP API endpoint", default="http://[::1]:9099")
 parser.add_argument("--ignore_duplicate", dest="ignore", action="store_true", help="Ignore duplicate database entry errors.")
+parser.add_argument("--replace", dest="replace", action="store_true", help="Replace existing reservations.")
 args = parser.parse_args()
 
 api_url = args.URL
 total_reservations = 0
 import_success = 0
+import_replace = 0
 import_fail    = 0
 import_ignore  = 0
 
@@ -44,6 +46,20 @@ for i in data["reservations"]:
             if respjson[0]["result"] > 0:
                 if args.ignore and "Database duplicate entry error" in respjson[0]["text"]:
                     import_ignore +=1
+                elif args.replace and "Database duplicate entry error" in respjson[0]["text"]:
+                    reservationdel = "{ \"command\": \"reservation-del\", \"service\": [ \"dhcp4\" ], \"arguments\": { \"subnet-id\": " + str(i["subnet-id"]).replace("'", '"') + ", \"ip-address\": \"" + i["ip-address"] + "\" }}"
+
+                    resjson = json.loads(reservationdel)
+                    response = requests.post(api_url, json=resjson)
+                    respjson = response.json()
+                    resjson = json.loads(reservationadd)
+                    response = requests.post(api_url, json=resjson)
+                    respjson = response.json()
+                    if respjson[0]["result"] == 0:
+                        import_replace +=1
+                    else:
+                        import_fail += 1
+                        print("Error: " + respjson[0]["text"] + " " + str(i))
                 else:
                     import_fail += 1
                     print("Error: " + respjson[0]["text"] + " " + str(i))
@@ -63,5 +79,6 @@ f.close()
 print("Finished importing reservations")
 print(f"Reservations processed: {total_reservations}")
 print(f"Successfully imported : {import_success}")
+print(f"Successfully replaced : {import_replace}")
 print(f"Import failed         : {import_fail}")
 print(f"Duplicates ignored    : {import_ignore}")
